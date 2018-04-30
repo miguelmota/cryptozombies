@@ -21,8 +21,16 @@ contract ZombieFeeding is ZombieFactory {
 
   KittyInterface kittyContract;
 
-  function setKittyContractAddress(address _address) external {
+  function setKittyContractAddress(address _address) external onlyOwner {
     kittyContract = KittyInterface(_address);
+  }
+
+  function _triggerCooldown(Zombie storage _zombie) internal {
+    _zombie.readyTime = uint32(now + cooldownTime);
+  }
+
+  function _isReady(Zombie storage _zombie) internal view returns (bool) {
+    return (_zombie.readyTime <= now);
   }
 
   function feedAndMultiply(uint _zombieId, uint _targetDna, string _species) public {
